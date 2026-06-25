@@ -1,0 +1,1622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LibraryHub — Management System</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #1a3a5c;
+    --primary-light: #2563a8;
+    --accent: #c8a84b;
+    --accent-light: #f0d88a;
+    --bg: #f4f1eb;
+    --bg-card: #ffffff;
+    --text: #1a1a2e;
+    --text-muted: #6b7280;
+    --border: #e5e0d8;
+    --success: #15803d;
+    --danger: #dc2626;
+    --warning: #d97706;
+    --sidebar-w: 240px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ========== AUTH PAGES ========== */
+  .auth-page {
+    min-height: 100vh;
+    display: flex;
+    background: linear-gradient(135deg, #1a3a5c 0%, #0f2240 50%, #1a3a5c 100%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .auth-page::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: rgba(200,168,75,0.08);
+    top: -150px; left: -150px;
+  }
+
+  .auth-page::after {
+    content: '';
+    position: absolute;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: rgba(200,168,75,0.05);
+    bottom: -100px; right: -100px;
+  }
+
+  .auth-left {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .auth-brand {
+    color: white;
+    max-width: 400px;
+  }
+
+  .auth-brand .logo-icon {
+    font-size: 64px;
+    margin-bottom: 24px;
+    display: block;
+  }
+
+  .auth-brand h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 42px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+
+  .auth-brand h1 span { color: var(--accent); }
+
+  .auth-brand p {
+    font-size: 16px;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.8;
+  }
+
+  .auth-features {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .auth-features .feat {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: rgba(255,255,255,0.8);
+    font-size: 14px;
+  }
+
+  .auth-features .feat .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .auth-right {
+    width: 480px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .auth-card {
+    background: white;
+    border-radius: 20px;
+    padding: 48px;
+    width: 100%;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.3);
+  }
+
+  .auth-card h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    margin-bottom: 8px;
+    color: var(--primary);
+  }
+
+  .auth-card .subtitle {
+    color: var(--text-muted);
+    font-size: 14px;
+    margin-bottom: 32px;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 0;
+    background: var(--bg);
+    border-radius: 10px;
+    padding: 4px;
+    margin-bottom: 28px;
+  }
+
+  .tab-btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.2s;
+  }
+
+  .tab-btn.active {
+    background: white;
+    color: var(--primary);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .form-group { margin-bottom: 20px; }
+
+  .form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .form-group input, .form-group select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-size: 14px;
+    color: var(--text);
+    background: #fafafa;
+    transition: border-color 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .form-group input:focus, .form-group select:focus {
+    outline: none;
+    border-color: var(--primary-light);
+    background: white;
+  }
+
+  .role-selector {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .role-btn {
+    flex: 1;
+    padding: 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    background: white;
+    cursor: pointer;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s;
+    color: var(--text-muted);
+  }
+
+  .role-btn.selected {
+    border-color: var(--primary);
+    background: #eef3fa;
+    color: var(--primary);
+  }
+
+  .role-btn .role-icon { font-size: 22px; display: block; margin-bottom: 4px; }
+
+  .btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .btn-primary:hover { background: var(--primary-light); transform: translateY(-1px); }
+
+  /* ========== APP LAYOUT ========== */
+  .app { display: none; min-height: 100vh; }
+
+  .sidebar {
+    width: var(--sidebar-w);
+    background: var(--primary);
+    height: 100vh;
+    position: fixed;
+    top: 0; left: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    z-index: 100;
+  }
+
+  .sidebar-header {
+    padding: 24px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: white;
+    text-decoration: none;
+  }
+
+  .sidebar-logo .logo-mark {
+    width: 36px; height: 36px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  .sidebar-logo span {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .sidebar-user {
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .user-avatar {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--primary);
+    flex-shrink: 0;
+  }
+
+  .user-info .name { color: white; font-size: 13px; font-weight: 600; }
+  .user-info .role-label { color: rgba(255,255,255,0.5); font-size: 11px; margin-top: 1px; }
+
+  .sidebar-nav { padding: 16px 12px; flex: 1; overflow-y: auto; }
+
+  .nav-section-label {
+    color: rgba(255,255,255,0.35);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 0 8px;
+    margin: 16px 0 6px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    color: rgba(255,255,255,0.65);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-bottom: 2px;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+  }
+
+  .nav-item:hover { background: rgba(255,255,255,0.08); color: white; }
+  .nav-item.active { background: rgba(255,255,255,0.15); color: white; }
+  .nav-item .nav-icon { font-size: 18px; }
+  .nav-item .badge {
+    margin-left: auto;
+    background: var(--accent);
+    color: var(--primary);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 20px;
+  }
+
+  .sidebar-footer {
+    padding: 16px 12px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .main-content {
+    margin-left: var(--sidebar-w);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .topbar {
+    background: white;
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .topbar-title { font-size: 18px; font-weight: 600; color: var(--primary); flex: 1; }
+
+  .search-bar {
+    display: flex;
+    align-items: center;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 0 14px;
+    gap: 8px;
+    width: 280px;
+  }
+
+  .search-bar input {
+    border: none;
+    background: none;
+    padding: 8px 0;
+    font-size: 14px;
+    color: var(--text);
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .search-bar input:focus { outline: none; }
+  .search-bar .search-icon { color: var(--text-muted); font-size: 16px; }
+
+  .page-content { padding: 28px 32px; flex: 1; }
+
+  /* ========== PAGES ========== */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* Dashboard */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 28px;
+  }
+
+  .stat-card {
+    background: white;
+    border-radius: 14px;
+    padding: 22px;
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .stat-card .stat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .stat-card .stat-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+  }
+
+  .stat-icon.blue { background: #dbeafe; }
+  .stat-icon.gold { background: #fef3c7; }
+  .stat-icon.green { background: #dcfce7; }
+  .stat-icon.red { background: #fee2e2; }
+
+  .stat-card .stat-number { font-size: 30px; font-weight: 700; color: var(--primary); }
+  .stat-card .stat-label { font-size: 13px; color: var(--text-muted); }
+  .stat-card .stat-trend { font-size: 12px; color: var(--success); font-weight: 500; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+  }
+
+  .section-title {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--primary);
+  }
+
+  .btn-outline {
+    padding: 7px 16px;
+    border: 1.5px solid var(--primary);
+    background: none;
+    border-radius: 8px;
+    color: var(--primary);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .btn-outline:hover { background: var(--primary); color: white; }
+
+  .btn-sm {
+    padding: 6px 14px;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.15s;
+  }
+
+  .btn-sm.issue { background: #dbeafe; color: #1e40af; }
+  .btn-sm.issue:hover { background: #bfdbfe; }
+  .btn-sm.return { background: #dcfce7; color: #15803d; }
+  .btn-sm.return:hover { background: #bbf7d0; }
+  .btn-sm.danger { background: #fee2e2; color: #dc2626; }
+  .btn-sm.danger:hover { background: #fecaca; }
+  .btn-sm.add { background: var(--primary); color: white; }
+  .btn-sm.add:hover { background: var(--primary-light); }
+
+  /* Cards grid */
+  .books-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+  }
+
+  .book-card {
+    background: white;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+  }
+
+  .book-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.1);
+  }
+
+  .book-cover {
+    height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 52px;
+    position: relative;
+  }
+
+  .book-card-body { padding: 14px; }
+
+  .book-card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .book-card-author {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+
+  .book-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .badge {
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .badge.available { background: #dcfce7; color: #15803d; }
+  .badge.issued { background: #fee2e2; color: #dc2626; }
+
+  .category-tag {
+    font-size: 11px;
+    color: var(--text-muted);
+    background: var(--bg);
+    padding: 3px 8px;
+    border-radius: 5px;
+  }
+
+  /* Table */
+  .table-wrap { background: white; border-radius: 14px; border: 1px solid var(--border); overflow: hidden; }
+
+  table { width: 100%; border-collapse: collapse; }
+
+  thead { background: #f8f7f5; }
+
+  th {
+    padding: 12px 20px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: 14px 20px;
+    font-size: 14px;
+    color: var(--text);
+    border-bottom: 1px solid #f3f2ef;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #fafaf8; }
+
+  /* Filters bar */
+  .filters-bar {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    padding: 7px 16px;
+    border: 1.5px solid var(--border);
+    background: white;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.15s;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .filter-btn.active {
+    border-color: var(--primary);
+    background: var(--primary);
+    color: white;
+  }
+
+  .filter-btn:hover:not(.active) {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+
+  /* Dashboard 2-col */
+  .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+  .activity-list { display: flex; flex-direction: column; gap: 0; }
+
+  .activity-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 20px;
+    border-bottom: 1px solid #f3f2ef;
+  }
+
+  .activity-item:last-child { border-bottom: none; }
+
+  .activity-dot {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .activity-text .main { font-size: 13px; font-weight: 500; color: var(--text); }
+  .activity-text .sub { font-size: 12px; color: var(--text-muted); }
+
+  .activity-time { margin-left: auto; font-size: 11px; color: var(--text-muted); white-space: nowrap; }
+
+  /* Fine Calculator */
+  .fine-calc {
+    background: white;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    padding: 32px;
+    max-width: 560px;
+  }
+
+  .fine-result {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    border-radius: 12px;
+    padding: 24px;
+    color: white;
+    text-align: center;
+    margin-top: 24px;
+  }
+
+  .fine-result .amount { font-size: 48px; font-weight: 700; color: var(--accent); }
+  .fine-result .label { font-size: 14px; opacity: 0.8; margin-top: 4px; }
+
+  /* Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: white;
+    border-radius: 16px;
+    padding: 36px;
+    width: 500px;
+    max-width: 95vw;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .modal h3 { font-size: 20px; font-weight: 700; color: var(--primary); margin-bottom: 6px; }
+  .modal .modal-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; }
+  .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; }
+
+  .btn-cancel {
+    padding: 10px 20px;
+    border: 1.5px solid var(--border);
+    background: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .btn-save {
+    padding: 10px 24px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    transition: background 0.2s;
+  }
+
+  .btn-save:hover { background: var(--primary-light); }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    background: #1a1a2e;
+    color: white;
+    padding: 14px 22px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 999;
+    display: none;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+
+  .toast.show { display: flex; }
+  .toast.success { border-left: 4px solid #22c55e; }
+  .toast.error { border-left: 4px solid #ef4444; }
+
+  /* Librarian form */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+  }
+
+  .empty-state .empty-icon { font-size: 52px; margin-bottom: 12px; }
+  .empty-state p { font-size: 14px; }
+
+  /* Animations */
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .page.active { animation: fadeIn 0.3s ease; }
+
+  .welcome-banner {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    border-radius: 16px;
+    padding: 28px 32px;
+    color: white;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .welcome-banner h2 { font-family: 'Playfair Display', serif; font-size: 24px; margin-bottom: 6px; }
+  .welcome-banner p { font-size: 14px; opacity: 0.8; }
+  .welcome-banner .banner-icon { font-size: 64px; opacity: 0.4; }
+</style>
+</head>
+<body>
+
+<!-- ===== AUTH PAGE ===== -->
+<div class="auth-page" id="authPage">
+  <div class="auth-left">
+    <div class="auth-brand">
+      <span class="logo-icon">📚</span>
+      <h1>Welcome to <span>LibraryHub</span></h1>
+      <p>A modern library management system designed to make book discovery, borrowing, and management seamless for everyone.</p>
+      <div class="auth-features">
+        <div class="feat"><span class="dot"></span> Browse thousands of books by category</div>
+        <div class="feat"><span class="dot"></span> Issue and return books digitally</div>
+        <div class="feat"><span class="dot"></span> Track your reading history</div>
+        <div class="feat"><span class="dot"></span> Instant fine calculations for late returns</div>
+        <div class="feat"><span class="dot"></span> Librarian panel for book management</div>
+      </div>
+    </div>
+  </div>
+  <div class="auth-right">
+    <div class="auth-card">
+      <h2>Get Started</h2>
+      <p class="subtitle">Sign in to your account or create a new one</p>
+
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('login')">Sign In</button>
+        <button class="tab-btn" onclick="switchTab('signup')">Sign Up</button>
+      </div>
+
+      <!-- LOGIN -->
+      <div id="loginForm">
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="loginEmail" placeholder="you@example.com" value="user@library.com">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="loginPassword" placeholder="Enter your password" value="password">
+        </div>
+        <div style="margin-bottom: 20px;">
+          <p style="font-size: 12px; color: var(--text-muted);">Demo: <strong>user@library.com</strong> / password (Member) &nbsp;|&nbsp; <strong>lib@library.com</strong> / password (Librarian)</p>
+        </div>
+        <button class="btn-primary" onclick="login()">Sign In →</button>
+      </div>
+
+      <!-- SIGNUP -->
+      <div id="signupForm" style="display:none;">
+        <div style="margin-bottom: 18px;">
+          <label style="font-size: 13px; font-weight: 500; display:block; margin-bottom:8px;">Sign up as</label>
+          <div class="role-selector">
+            <div class="role-btn selected" id="roleMember" onclick="selectRole('member')">
+              <span class="role-icon">👤</span>Member
+            </div>
+            <div class="role-btn" id="roleLibrarian" onclick="selectRole('librarian')">
+              <span class="role-icon">📖</span>Librarian
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="signupName" placeholder="Your full name">
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="signupEmail" placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="signupPassword" placeholder="Create a password">
+        </div>
+        <button class="btn-primary" onclick="signup()">Create Account →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MAIN APP ===== -->
+<div class="app" id="appContainer">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <div class="logo-mark">📚</div>
+        <span>LibraryHub</span>
+      </div>
+    </div>
+    <div class="sidebar-user">
+      <div class="user-avatar" id="sidebarAvatar">U</div>
+      <div class="user-info">
+        <div class="name" id="sidebarName">User</div>
+        <div class="role-label" id="sidebarRole">Member</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+      <button class="nav-item active" onclick="showPage('dashboard')">
+        <span class="nav-icon">🏠</span> Dashboard
+      </button>
+      <button class="nav-item" onclick="showPage('catalog')">
+        <span class="nav-icon">📚</span> Book Catalog
+        <span class="badge" id="catalogBadge">24</span>
+      </button>
+      <button class="nav-item" onclick="showPage('mybooks')">
+        <span class="nav-icon">📖</span> My Books
+      </button>
+
+      <div class="nav-section-label">Tools</div>
+      <button class="nav-item" onclick="showPage('fine')">
+        <span class="nav-icon">🧮</span> Fine Calculator
+      </button>
+
+      <div id="librarianNav" style="display:none;">
+        <div class="nav-section-label">Librarian</div>
+        <button class="nav-item" onclick="showPage('addbook')">
+          <span class="nav-icon">➕</span> Add New Book
+        </button>
+        <button class="nav-item" onclick="showPage('manage')">
+          <span class="nav-icon">⚙️</span> Manage Books
+        </button>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="nav-item" onclick="logout()" style="color:rgba(255,100,100,0.8);">
+        <span class="nav-icon">🚪</span> Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-content">
+    <div class="topbar">
+      <div class="topbar-title" id="topbarTitle">Dashboard</div>
+      <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Search books, authors..." id="globalSearch" oninput="handleSearch(this.value)">
+      </div>
+    </div>
+
+    <div class="page-content">
+
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <div class="welcome-banner">
+          <div>
+            <h2 id="welcomeMsg">Good morning! 👋</h2>
+            <p id="welcomeSub">Here's what's happening in the library today.</p>
+          </div>
+          <div class="banner-icon">📚</div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon blue">📚</div>
+            </div>
+            <div class="stat-number" id="stat-total">24</div>
+            <div class="stat-label">Total Books</div>
+            <div class="stat-trend">↑ Library Collection</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon green">✅</div>
+            </div>
+            <div class="stat-number" id="stat-available">20</div>
+            <div class="stat-label">Available</div>
+            <div class="stat-trend">↑ Ready to issue</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon gold">📤</div>
+            </div>
+            <div class="stat-number" id="stat-issued">4</div>
+            <div class="stat-label">Issued Books</div>
+            <div class="stat-trend">↗ Currently out</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon red">⚠️</div>
+            </div>
+            <div class="stat-number" id="stat-myissued">0</div>
+            <div class="stat-label">My Issued Books</div>
+            <div class="stat-trend">Your borrowings</div>
+          </div>
+        </div>
+
+        <div class="dash-grid">
+          <div>
+            <div class="section-header">
+              <div class="section-title">Recent Activity</div>
+            </div>
+            <div class="table-wrap">
+              <div class="activity-list" id="activityList"></div>
+            </div>
+          </div>
+          <div>
+            <div class="section-header">
+              <div class="section-title">My Issued Books</div>
+              <button class="btn-outline" onclick="showPage('mybooks')">View All</button>
+            </div>
+            <div class="table-wrap" id="dashMyBooks"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CATALOG -->
+      <div class="page" id="page-catalog">
+        <div class="filters-bar" id="categoryFilters"></div>
+        <div class="books-grid" id="booksGrid"></div>
+      </div>
+
+      <!-- MY BOOKS -->
+      <div class="page" id="page-mybooks">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Book</th>
+                <th>Author</th>
+                <th>Issue Date</th>
+                <th>Due Date</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="myBooksTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- FINE CALCULATOR -->
+      <div class="page" id="page-fine">
+        <div class="fine-calc">
+          <h3 style="font-family:'Playfair Display',serif; font-size:22px; color:var(--primary); margin-bottom:8px;">🧮 Fine Calculator</h3>
+          <p style="color:var(--text-muted); font-size:14px; margin-bottom:28px;">Calculate late return fines. Fine rate: ₹2 per day after due date.</p>
+          <div class="form-group">
+            <label>Due Date</label>
+            <input type="date" id="dueDate">
+          </div>
+          <div class="form-group">
+            <label>Return Date</label>
+            <input type="date" id="returnDate">
+          </div>
+          <div class="form-group">
+            <label>Fine Rate (₹ per day)</label>
+            <input type="number" id="fineRate" value="2" min="1">
+          </div>
+          <button class="btn-primary" onclick="calculateFine()" style="margin-bottom:0;">Calculate Fine</button>
+          <div class="fine-result" id="fineResult" style="display:none;">
+            <div class="amount" id="fineAmount">₹0</div>
+            <div class="label" id="fineDays">0 days overdue</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADD BOOK (Librarian) -->
+      <div class="page" id="page-addbook">
+        <div class="fine-calc" style="max-width: 640px;">
+          <h3 style="font-family:'Playfair Display',serif; font-size:22px; color:var(--primary); margin-bottom:8px;">➕ Add New Book</h3>
+          <p style="color:var(--text-muted); font-size:14px; margin-bottom:28px;">Fill in the details to add a new book to the library collection.</p>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Book Title *</label>
+              <input type="text" id="newTitle" placeholder="Enter book title">
+            </div>
+            <div class="form-group">
+              <label>Author *</label>
+              <input type="text" id="newAuthor" placeholder="Author name">
+            </div>
+            <div class="form-group">
+              <label>Category *</label>
+              <select id="newCategory">
+                <option value="">Select category</option>
+                <option>Science Fiction</option>
+                <option>Fiction</option>
+                <option>Non-Fiction</option>
+                <option>Technology</option>
+                <option>History</option>
+                <option>Biography</option>
+                <option>Mystery</option>
+                <option>Self Help</option>
+                <option>Science</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>ISBN</label>
+              <input type="text" id="newISBN" placeholder="978-XXXXXXXXXX">
+            </div>
+            <div class="form-group">
+              <label>Publisher</label>
+              <input type="text" id="newPublisher" placeholder="Publisher name">
+            </div>
+            <div class="form-group">
+              <label>Year Published</label>
+              <input type="number" id="newYear" placeholder="2024" min="1900" max="2025">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <input type="text" id="newDesc" placeholder="Brief description of the book">
+          </div>
+          <button class="btn-primary" onclick="addBook()">Add Book to Library</button>
+        </div>
+      </div>
+
+      <!-- MANAGE BOOKS (Librarian) -->
+      <div class="page" id="page-manage">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Issued To</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="manageTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- BOOK DETAIL MODAL -->
+<div class="modal-overlay" id="bookModal">
+  <div class="modal">
+    <div style="display:flex; align-items:center; gap:20px; margin-bottom:20px;">
+      <div style="font-size:56px;" id="modalEmoji"></div>
+      <div>
+        <h3 id="modalTitle"></h3>
+        <p class="modal-sub" id="modalAuthor"></p>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px;">
+      <div style="background:var(--bg); padding:12px; border-radius:8px;">
+        <div style="font-size:11px; color:var(--text-muted); margin-bottom:3px;">Category</div>
+        <div style="font-size:14px; font-weight:500;" id="modalCategory"></div>
+      </div>
+      <div style="background:var(--bg); padding:12px; border-radius:8px;">
+        <div style="font-size:11px; color:var(--text-muted); margin-bottom:3px;">Status</div>
+        <div style="font-size:14px; font-weight:500;" id="modalStatus"></div>
+      </div>
+      <div style="background:var(--bg); padding:12px; border-radius:8px;">
+        <div style="font-size:11px; color:var(--text-muted); margin-bottom:3px;">Publisher</div>
+        <div style="font-size:14px; font-weight:500;" id="modalPublisher"></div>
+      </div>
+      <div style="background:var(--bg); padding:12px; border-radius:8px;">
+        <div style="font-size:11px; color:var(--text-muted); margin-bottom:3px;">Year</div>
+        <div style="font-size:14px; font-weight:500;" id="modalYear"></div>
+      </div>
+    </div>
+    <p style="font-size:14px; color:var(--text-muted); line-height:1.7; margin-bottom:20px;" id="modalDesc"></p>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Close</button>
+      <button class="btn-save" id="modalActionBtn" onclick="modalAction()"></button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ========== DATA ==========
+const FINE_RATE = 2;
+let currentUser = null;
+let selectedRole = 'member';
+let currentBookId = null;
+
+const COVERS = ['#dbeafe','#fef3c7','#dcfce7','#fce7f3','#ede9fe','#ffedd5','#e0f2fe','#f0fdf4'];
+const EMOJIS = ['📖','📗','📘','📙','📕','🔖','📓','📔'];
+
+function getColor(i) { return COVERS[i % COVERS.length]; }
+function getEmoji(i) { return EMOJIS[i % EMOJIS.length]; }
+
+let users = [
+  { id: 1, name: 'Alex Johnson', email: 'user@library.com', password: 'password', role: 'member' },
+  { id: 2, name: 'Sarah Williams', email: 'lib@library.com', password: 'password', role: 'librarian' }
+];
+
+let books = [
+  { id:1, title:'The Great Gatsby', author:'F. Scott Fitzgerald', category:'Fiction', isbn:'978-0743273565', publisher:'Scribner', year:1925, desc:'A story of wealth, love, and the American Dream in the 1920s.', status:'available', issuedTo:null, issueDate:null, dueDate:null },
+  { id:2, title:'To Kill a Mockingbird', author:'Harper Lee', category:'Fiction', isbn:'978-0061935466', publisher:'HarperCollins', year:1960, desc:'A powerful story of racial injustice and childhood innocence in Alabama.', status:'issued', issuedTo:1, issueDate:'2025-06-01', dueDate:'2025-06-15' },
+  { id:3, title:'1984', author:'George Orwell', category:'Science Fiction', isbn:'978-0451524935', publisher:'Signet', year:1949, desc:'A dystopian vision of a totalitarian society under constant surveillance.', status:'available', issuedTo:null, issueDate:null, dueDate:null },
+  { id:4, title:'Clean Code', author:'Robert C. Martin', category:'Technology', isbn:'978-0132350884', publisher:'Prentice Hall', year:2008, desc:'A guide to writing clean, maintainable, and professional code.', status:'available', issuedTo:null, issueDate:null, dueDate:null },
+  { id:5, title:'Sapiens', author:'Yuval Noah Harari', category:'History', isbn:'978-0062316097', publisher:'Harper', year:2015, desc:'A brief history of humankind from the Stone Age to modern times.', status:'issued', issuedTo:1, issueDate:'2025-06-05', dueDate:'2025-06-19' },
+  { id:6, title:'The Alchemist', author:'Paulo Coelho', category:'Fiction', isbn:'978-0062315007', publisher:'HarperOne', year:1988, desc:'A mystical story about following your dreams and listening to your heart.', status:'available', issuedTo:null, issueDate:null, dueDate:null },
+  { id:7, title:'Atomic Habits', author:'James Clear', category:'Self Help', isbn:'978-0735211292', publisher:'Avery', year:2018, desc:'Tiny changes, remarkable results — a proven framework for building good habits.', status:'available', issuedTo:null, issueDate:null, dueDate:null },
+  { id:8, title:'A Brief History of Time', author:'Stephen Hawking', category:'Science', isbn:'978-0553380163', publisher:'Bantam', year:1988, desc:'An exploration of cosmology, from the Big Bang to black holes.', status:'available', issuedTo:null, issueDate:null, dueDate:null },
+  { id:9, title:'The Da Vinci Code', author:'Dan Brown', category:'Mystery', isbn:'978-0307474278', publisher:'Anchor', year:2003, desc:'A cryptologist and symbologist uncover a religious conspiracy.', status:'available', issuedTo:null, issueDate:null, dueDate:null },
+  { id:10, title:'Steve Jobs', author:'Walter Isaacson', category:'Biography', isbn:'978-1451648539', publisher:'Simon & Schuster', year:2011, desc:'The exclusive biography of Apple co-founder Steve Jobs.', status:'available', issuedTo:null, issueDate:null, dueDate:null },
+  { id:11, title:'Dune', author:'Frank Herbert', category:'Science Fiction', isbn:'978-0441013593', publisher:'Ace', year:1965, desc:'An epic science fiction saga of politics, religion, and ecology on a desert planet.', status:'available', issuedTo:null, issueDate:null, dueDate:null },
+  { id:12, title:'The Lean Startup', author:'Eric Ries', category:'Technology', isbn:'978-0307887894', publisher:'Crown', year:2011, desc:'How today\'s entrepreneurs use continuous innovation to create successful businesses.', status:'issued', issuedTo:null, issueDate:'2025-06-10', dueDate:'2025-06-24' },
+  { id:13, title:'Pride and Prejudice', author:'Jane Austen', category:'Fiction', isbn:'978-0141439518', publisher:'Penguin', year:1813, desc:'A romantic novel about manners, upbringing, and marriage in Georgian England.', status:'available', issuedTo:null, issueDate:null, dueDate:null },
+  { id:14, title:'The Psychology of Money', author:'Morgan Housel', category:'Non-Fiction', isbn:'978-0857197689', publisher:'Harriman House', year:2020, desc:'Timeless lessons on wealth, greed, and happiness.', status:'available', issuedTo:null, issueDate:null, dueDate:null },
+  { id:15, title:'Harry Potter & The Sorcerer\'s Stone', author:'J.K. Rowling', category:'Fiction', isbn:'978-0590353427', publisher:'Scholastic', year:1997, desc:'A young wizard discovers his magical heritage and begins his education at Hogwarts.', status:'available', issuedTo:null, issueDate:null, dueDate:null },
+  { id:16, title:'The Pragmatic Programmer', author:'David Thomas', category:'Technology', isbn:'978-0135957059', publisher:'Addison-Wesley', year:2019, desc:'Essential guide for programmers to become pragmatic, adaptable professionals.', status:'available', issuedTo:null, issueDate:null, dueDate:null },
+  { id:17, title:'Educated', author:'Tara Westover', category:'Biography', isbn:'978-0399590504', publisher:'Random House', year:2018, desc:'A memoir about a woman who grew up in a survivalist family and pursued education.', status:'available', issuedTo:null, issueDate:null, dueDate:null },
+  { id:18, title:'The Midnight Library', author:'Matt Haig', category:'Fiction', isbn:'978-0525559474', publisher:'Viking', year:2020, desc:'Between life and death is a library filled with books of lives not lived.', status:'available', issuedTo:null, issueDate:null, dueDate:null },
+  { id:19, title:'Deep Work', author:'Cal Newport', category:'Self Help', isbn:'978-1455586691', publisher:'Grand Central', year:2016, desc:'Rules for focused success in a distracted world.', status:'available', issuedTo:null, issueDate:null, dueDate:null },
+  { id:20, title:'Thinking, Fast and Slow', author:'Daniel Kahneman', category:'Non-Fiction', isbn:'978-0374533557', publisher:'FSG', year:2011, desc:'Explores the two systems that drive the way we think.', status:'available', issuedTo:null, issueDate:null, dueDate:null },
+  { id:21, title:'The Hitchhiker\'s Guide to the Galaxy', author:'Douglas Adams', category:'Science Fiction', isbn:'978-0345391803', publisher:'Del Rey', year:1979, desc:'A comedic science fiction story about Earth\'s destruction and one man\'s journey.', status:'available', issuedTo:null, issueDate:null, dueDate:null },
+  { id:22, title:'Sherlock Holmes', author:'Arthur Conan Doyle', category:'Mystery', isbn:'978-0743273565', publisher:'Harper', year:1892, desc:'The collected adventures of the world\'s greatest detective.', status:'available', issuedTo:null, issueDate:null, dueDate:null },
+  { id:23, title:'Ikigai', author:'Héctor García', category:'Self Help', isbn:'978-0143130727', publisher:'Penguin', year:2016, desc:'The Japanese secret to a long and happy life.', status:'available', issuedTo:null, issueDate:null, dueDate:null },
+  { id:24, title:'Zero to One', author:'Peter Thiel', category:'Non-Fiction', isbn:'978-0804139021', publisher:'Crown', year:2014, desc:'Notes on startups and how to build the future.', status:'available', issuedTo:null, issueDate:null, dueDate:null },
+];
+
+let activities = [
+  { icon:'📥', text:'Alex Johnson issued "To Kill a Mockingbird"', time:'2h ago', color:'#dbeafe' },
+  { icon:'📤', text:'Sarah returned "Clean Code"', time:'5h ago', color:'#dcfce7' },
+  { icon:'➕', text:'New book added: "Ikigai"', time:'1d ago', color:'#fef3c7' },
+  { icon:'⚠️', text:'"The Lean Startup" is overdue', time:'2d ago', color:'#fee2e2' },
+  { icon:'📥', text:'Alex issued "Sapiens"', time:'3d ago', color:'#dbeafe' },
+];
+
+let currentFilter = 'All';
+
+// ========== AUTH ==========
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', (tab==='login' && i===0)||(tab==='signup' && i===1)));
+  document.getElementById('loginForm').style.display = tab==='login' ? 'block' : 'none';
+  document.getElementById('signupForm').style.display = tab==='signup' ? 'block' : 'none';
+}
+
+function selectRole(role) {
+  selectedRole = role;
+  document.getElementById('roleMember').classList.toggle('selected', role==='member');
+  document.getElementById('roleLibrarian').classList.toggle('selected', role==='librarian');
+}
+
+function login() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const user = users.find(u => u.email===email && u.password===password);
+  if (!user) { showToast('Invalid email or password', 'error'); return; }
+  currentUser = user;
+  startApp();
+}
+
+function signup() {
+  const name = document.getElementById('signupName').value.trim();
+  const email = document.getElementById('signupEmail').value.trim();
+  const password = document.getElementById('signupPassword').value;
+  if (!name||!email||!password) { showToast('Please fill all fields', 'error'); return; }
+  if (users.find(u=>u.email===email)) { showToast('Email already exists', 'error'); return; }
+  const newUser = { id: users.length+1, name, email, password, role: selectedRole };
+  users.push(newUser);
+  currentUser = newUser;
+  showToast('Account created successfully!', 'success');
+  startApp();
+}
+
+function logout() {
+  currentUser = null;
+  document.getElementById('authPage').style.display='flex';
+  document.getElementById('appContainer').style.display='none';
+  document.getElementById('loginEmail').value='user@library.com';
+  document.getElementById('loginPassword').value='password';
+}
+
+function startApp() {
+  document.getElementById('authPage').style.display='none';
+  document.getElementById('appContainer').style.display='flex';
+
+  document.getElementById('sidebarName').textContent = currentUser.name;
+  document.getElementById('sidebarRole').textContent = currentUser.role==='librarian' ? '📖 Librarian' : '👤 Member';
+  document.getElementById('sidebarAvatar').textContent = currentUser.name.charAt(0).toUpperCase();
+
+  document.getElementById('librarianNav').style.display = currentUser.role==='librarian' ? 'block' : 'none';
+
+  const hr = new Date().getHours();
+  const greet = hr<12 ? 'Good morning' : hr<17 ? 'Good afternoon' : 'Good evening';
+  document.getElementById('welcomeMsg').textContent = `${greet}, ${currentUser.name.split(' ')[0]}! 👋`;
+  document.getElementById('welcomeSub').textContent = `Welcome to LibraryHub. You have ${getMyBooks().length} book(s) issued.`;
+
+  refreshStats();
+  renderCatalog();
+  renderDashMyBooks();
+  renderActivityList();
+  renderMyBooks();
+  renderManage();
+  buildCategoryFilters();
+  showPage('dashboard');
+}
+
+// ========== STATS ==========
+function refreshStats() {
+  const total = books.length;
+  const available = books.filter(b=>b.status==='available').length;
+  const issued = books.filter(b=>b.status==='issued').length;
+  const myIssued = getMyBooks().length;
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-available').textContent = available;
+  document.getElementById('stat-issued').textContent = issued;
+  document.getElementById('stat-myissued').textContent = myIssued;
+  document.getElementById('catalogBadge').textContent = total;
+}
+
+function getMyBooks() {
+  if (!currentUser) return [];
+  return books.filter(b=>b.status==='issued' && b.issuedTo===currentUser.id);
+}
+
+// ========== CATALOG ==========
+function getCategories() {
+  return ['All', ...new Set(books.map(b=>b.category))];
+}
+
+function buildCategoryFilters() {
+  const cats = getCategories();
+  const bar = document.getElementById('categoryFilters');
+  bar.innerHTML = cats.map(c => `<button class="filter-btn ${c===currentFilter?'active':''}" onclick="filterCat('${c}')">${c}</button>`).join('');
+}
+
+function filterCat(cat) {
+  currentFilter = cat;
+  buildCategoryFilters();
+  renderCatalog();
+}
+
+function renderCatalog(filterText='') {
+  let filtered = books;
+  if (currentFilter !== 'All') filtered = filtered.filter(b=>b.category===currentFilter);
+  if (filterText) filtered = filtered.filter(b=>b.title.toLowerCase().includes(filterText)||b.author.toLowerCase().includes(filterText));
+
+  const grid = document.getElementById('booksGrid');
+  if (filtered.length===0) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="empty-icon">🔍</div><p>No books found. Try a different search or filter.</p></div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map((b,i) => `
+    <div class="book-card" onclick="openBook(${b.id})">
+      <div class="book-cover" style="background:${getColor(b.id)};">${getEmoji(b.id)}</div>
+      <div class="book-card-body">
+        <div class="book-card-title">${b.title}</div>
+        <div class="book-card-author">${b.author}</div>
+        <div class="book-card-footer">
+          <span class="badge ${b.status}">${b.status==='available'?'Available':'Issued'}</span>
+          <span class="category-tag">${b.category}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ========== BOOK MODAL ==========
+function openBook(id) {
+  currentBookId = id;
+  const b = books.find(bk=>bk.id===id);
+  if (!b) return;
+  document.getElementById('modalEmoji').textContent = getEmoji(id);
+  document.getElementById('modalTitle').textContent = b.title;
+  document.getElementById('modalAuthor').textContent = 'by ' + b.author;
+  document.getElementById('modalCategory').textContent = b.category;
+  document.getElementById('modalStatus').innerHTML = `<span class="badge ${b.status}">${b.status==='available'?'Available':'Issued'}</span>`;
+  document.getElementById('modalPublisher').textContent = b.publisher || 'N/A';
+  document.getElementById('modalYear').textContent = b.year || 'N/A';
+  document.getElementById('modalDesc').textContent = b.desc;
+
+  const isMyBook = b.issuedTo === currentUser.id;
+  const btn = document.getElementById('modalActionBtn');
+  if (b.status==='available') {
+    btn.textContent = '📥 Issue This Book';
+    btn.style.background = 'var(--primary)';
+  } else if (isMyBook) {
+    btn.textContent = '📤 Return This Book';
+    btn.style.background = '#15803d';
+  } else {
+    btn.textContent = 'Not Available';
+    btn.style.background = '#9ca3af';
+    btn.disabled = true;
+  }
+  btn.disabled = (!isMyBook && b.status==='issued');
+
+  document.getElementById('bookModal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('bookModal').classList.remove('open');
+  currentBookId = null;
+}
+
+function modalAction() {
+  const b = books.find(bk=>bk.id===currentBookId);
+  if (!b) return;
+  if (b.status==='available') {
+    issueBook(b.id);
+  } else if (b.issuedTo===currentUser.id) {
+    returnBook(b.id);
+  }
+  closeModal();
+}
+
+function issueBook(id) {
+  const b = books.find(bk=>bk.id===id);
+  if (!b || b.status!=='available') return;
+  const today = new Date();
+  const due = new Date(today); due.setDate(due.getDate()+14);
+  b.status='issued';
+  b.issuedTo=currentUser.id;
+  b.issueDate=today.toISOString().split('T')[0];
+  b.dueDate=due.toISOString().split('T')[0];
+  activities.unshift({ icon:'📥', text:`${currentUser.name} issued "${b.title}"`, time:'Just now', color:'#dbeafe' });
+  refreshAll();
+  showToast(`"${b.title}" issued successfully! Due: ${b.dueDate}`, 'success');
+}
+
+function returnBook(id) {
+  const b = books.find(bk=>bk.id===id);
+  if (!b) return;
+  activities.unshift({ icon:'📤', text:`${currentUser.name} returned "${b.title}"`, time:'Just now', color:'#dcfce7' });
+  b.status='available';
+  b.issuedTo=null;
+  b.issueDate=null;
+  b.dueDate=null;
+  refreshAll();
+  showToast(`"${b.title}" returned successfully!`, 'success');
+}
+
+function refreshAll() {
+  refreshStats();
+  renderCatalog();
+  renderMyBooks();
+  renderDashMyBooks();
+  renderActivityList();
+  renderManage();
+  document.getElementById('welcomeSub').textContent = `Welcome to LibraryHub. You have ${getMyBooks().length} book(s) issued.`;
+}
+
+// ========== DASHBOARD MY BOOKS ==========
+function renderDashMyBooks() {
+  const my = getMyBooks();
+  const el = document.getElementById('dashMyBooks');
+  if (my.length===0) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><p>No books issued yet. Browse the catalog!</p></div>`;
+    return;
+  }
+  el.innerHTML = `<table><thead><tr><th>Book</th><th>Due Date</th><th>Action</th></tr></thead><tbody>
+    ${my.map(b=>`<tr>
+      <td><strong>${b.title}</strong><br><small style="color:var(--text-muted)">${b.author}</small></td>
+      <td style="color:${isOverdue(b.dueDate)?'var(--danger)':'var(--text)'};">${b.dueDate} ${isOverdue(b.dueDate)?'⚠️':''}</td>
+      <td><button class="btn-sm return" onclick="returnBook(${b.id})">Return</button></td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+function isOverdue(due) {
+  if (!due) return false;
+  return new Date(due) < new Date();
+}
+
+// ========== ACTIVITY ==========
+function renderActivityList() {
+  const el = document.getElementById('activityList');
+  el.innerHTML = activities.slice(0,6).map(a=>`
+    <div class="activity-item">
+      <div class="activity-dot" style="background:${a.color};">${a.icon}</div>
+      <div class="activity-text">
+        <div class="main">${a.text}</div>
+      </div>
+      <div class="activity-time">${a.time}</div>
+    </div>
+  `).join('');
+}
+
+// ========== MY BOOKS TABLE ==========
+function renderMyBooks() {
+  const my = getMyBooks();
+  const tb = document.getElementById('myBooksTable');
+  if (my.length===0) {
+    tb.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:40px; color:var(--text-muted);">📭 No books issued. Go to the catalog to issue books.</td></tr>`;
+    return;
+  }
+  tb.innerHTML = my.map(b=>`
+    <tr>
+      <td><strong>${b.title}</strong></td>
+      <td>${b.author}</td>
+      <td>${b.issueDate}</td>
+      <td style="color:${isOverdue(b.dueDate)?'var(--danger)':'var(--text)'};">${b.dueDate} ${isOverdue(b.dueDate)?'⚠️ Overdue':''}</td>
+      <td><span class="badge issued">Issued</span></td>
+      <td><button class="btn-sm return" onclick="returnBook(${b.id}); renderMyBooks();">Return</button></td>
+    </tr>
+  `).join('');
+}
+
+// ========== MANAGE (Librarian) ==========
+function renderManage() {
+  if (!currentUser || currentUser.role!=='librarian') return;
+  const tb = document.getElementById('manageTable');
+  tb.innerHTML = books.map(b=>`
+    <tr>
+      <td><strong>${b.title}</strong></td>
+      <td>${b.author}</td>
+      <td><span class="category-tag">${b.category}</span></td>
+      <td><span class="badge ${b.status}">${b.status==='available'?'Available':'Issued'}</span></td>
+      <td style="color:var(--text-muted); font-size:13px;">${b.issuedTo ? (users.find(u=>u.id===b.issuedTo)||{name:'Unknown'}).name : '—'}</td>
+      <td>
+        ${b.status==='issued' ? `<button class="btn-sm return" onclick="libForceReturn(${b.id})">Force Return</button>` : ''}
+        <button class="btn-sm danger" onclick="deleteBook(${b.id})" style="margin-left:4px;">Delete</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function libForceReturn(id) {
+  const b = books.find(bk=>bk.id===id);
+  if (!b) return;
+  activities.unshift({ icon:'🔄', text:`Librarian force-returned "${b.title}"`, time:'Just now', color:'#fef3c7' });
+  b.status='available'; b.issuedTo=null; b.issueDate=null; b.dueDate=null;
+  refreshAll();
+  showToast('Book force-returned successfully', 'success');
+}
+
+function deleteBook(id) {
+  if (!confirm('Are you sure you want to delete this book?')) return;
+  const idx = books.findIndex(b=>b.id===id);
+  if (idx===-1) return;
+  const title = books[idx].title;
+  books.splice(idx,1);
+  activities.unshift({ icon:'🗑️', text:`Deleted "${title}" from library`, time:'Just now', color:'#fee2e2' });
+  refreshAll();
+  buildCategoryFilters();
+  showToast('Book deleted from library', 'success');
+}
+
+// ========== ADD BOOK ==========
+function addBook() {
+  const title = document.getElementById('newTitle').value.trim();
+  const author = document.getElementById('newAuthor').value.trim();
+  const category = document.getElementById('newCategory').value;
+  const isbn = document.getElementById('newISBN').value.trim();
+  const publisher = document.getElementById('newPublisher').value.trim();
+  const year = document.getElementById('newYear').value;
+  const desc = document.getElementById('newDesc').value.trim();
+
+  if (!title||!author||!category) { showToast('Title, Author, and Category are required!', 'error'); return; }
+
+  const newBook = {
+    id: books.length+1, title, author, category,
+    isbn: isbn||'N/A', publisher: publisher||'N/A', year: year||'N/A',
+    desc: desc||'No description available.',
+    status:'available', issuedTo:null, issueDate:null, dueDate:null
+  };
+  books.push(newBook);
+  activities.unshift({ icon:'➕', text:`Librarian added "${title}"`, time:'Just now', color:'#fef3c7' });
+
+  ['newTitle','newAuthor','newISBN','newPublisher','newYear','newDesc'].forEach(id=>{ document.getElementById(id).value=''; });
+  document.getElementById('newCategory').value='';
+
+  refreshAll();
+  buildCategoryFilters();
+  showToast(`"${title}" added to library!`, 'success');
+  showPage('catalog');
+}
+
+// ========== FINE CALCULATOR ==========
+function calculateFine() {
+  const due = document.getElementById('dueDate').value;
+  const ret = document.getElementById('returnDate').value;
+  const rate = parseInt(document.getElementById('fineRate').value) || 2;
+
+  if (!due||!ret) { showToast('Please select both dates', 'error'); return; }
+
+  const dueD = new Date(due);
+  const retD = new Date(ret);
+  const diff = Math.floor((retD-dueD)/(1000*60*60*24));
+
+  const result = document.getElementById('fineResult');
+  result.style.display='block';
+
+  if (diff<=0) {
+    document.getElementById('fineAmount').textContent='₹0';
+    document.getElementById('fineDays').textContent='Returned on time! No fine. ✅';
+    result.style.background='linear-gradient(135deg, #15803d 0%, #16a34a 100%)';
+  } else {
+    const fine = diff*rate;
+    document.getElementById('fineAmount').textContent=`₹${fine}`;
+    document.getElementById('fineDays').textContent=`${diff} day${diff>1?'s':''} overdue × ₹${rate}/day`;
+    result.style.background='linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)';
+  }
+}
+
+// ========== SEARCH ==========
+function handleSearch(val) {
+  if (val.trim()) {
+    showPage('catalog', false);
+    renderCatalog(val.toLowerCase());
+  }
+}
+
+// ========== PAGE NAVIGATION ==========
+function showPage(page, updateNav=true) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+
+  if (updateNav) {
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n=>{
+      if (n.getAttribute('onclick')&&n.getAttribute('onclick').includes("'"+page+"'")) n.classList.add('active');
+    });
+  }
+
+  const titles = { dashboard:'Dashboard', catalog:'Book Catalog', mybooks:'My Books', fine:'Fine Calculator', addbook:'Add New Book', manage:'Manage Books' };
+  document.getElementById('topbarTitle').textContent = titles[page]||page;
+
+  if (page==='catalog') { renderCatalog(); buildCategoryFilters(); }
+  if (page==='mybooks') renderMyBooks();
+  if (page==='manage') renderManage();
+}
+
+// ========== TOAST ==========
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = (type==='success'?'✅ ':'❌ ') + msg;
+  t.className = `toast show ${type}`;
+  setTimeout(()=>t.classList.remove('show'), 3500);
+}
+</script>
+</body>
+</html>
